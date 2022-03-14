@@ -29,6 +29,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  equatable: any
+  json_annotation: any
+  freezed_annotation: any
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -43,10 +46,16 @@ dependencies:
   hive_flutter: ^1.1.0
   ez_flutter: ^0.7.2
   async: ^2.8.2
+  get: ^4.6.1
+  states_rebuilder: ^6.0.0
+  shared_preferences: ^2.0.13
+  get_it: ^7.2.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  json_serializable: any
+  freezed: any
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
