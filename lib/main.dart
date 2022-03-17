@@ -1,33 +1,39 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:moco_monitor/logic/data.dart';
-import 'package:moco_monitor/logic/navigator.dart';
-import 'package:states_rebuilder/states_rebuilder.dart';
-// import 'package:get/get.dart';
-
+import 'package:moco_monitor/pages/home.dart';
+import 'package:moco_monitor/pages/login.dart';
+import 'package:vrouter/vrouter.dart';
 import 'logic/storage.dart';
 
-void main() async {
-  // final prefs = RM.inject(() => Prefs()).state;
-  // final data = RM.inject(() => Data());
-  // ignore: unused_local_variable
-  // final data = Data().inj();
-  // final prefs = Prefs().inj();
-  // prefs.state.init();
+void main() {
   GetIt.instance.registerSingleton<Prefs>(Prefs());
-  // GetIt.instance<Prefs>().init();
-  bool e = await GetIt.instance<Prefs>().init();
-  debugPrint(e ? "true" : "false");
   GetIt.instance.registerSingleton<Data>(Data());
-  myNavigator;
 
-  // Get.put(prefs);
-  runApp(MaterialApp.router(
-    title: 'Flutter Demo',
-    theme: ThemeData(
-      primarySwatch: Colors.blue,
+  runApp(
+    VRouter(
+      title: 'Flutter Demo',
+      theme: ThemeData(
+        primarySwatch: Colors.orange,
+      ),
+      routes: [
+        VGuard(
+          afterEnter: (context, from, to) {
+            GetIt.instance<Data>().validCreds
+                ? null
+                : context.vRouter.to('/login');
+          },
+          // beforeEnter: (vRedirector) async {
+          //   data.isLoggedIn ? null : vRedirector.to('/login');
+          // },
+          stackedRoutes: [VWidget(path: '/', widget: const Home())],
+        ),
+        VWidget(path: '/login', widget: const LoginScreen()),
+        VRouteRedirector(
+          redirectTo: '/',
+          path: r'*',
+        )
+      ],
     ),
-    routeInformationParser: myNavigator.routeInformationParser,
-    routerDelegate: myNavigator.routerDelegate,
-  ));
+  );
 }

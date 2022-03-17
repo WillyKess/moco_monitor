@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get_it/get_it.dart';
-import 'package:moco_monitor/logic/navigator.dart';
-import 'package:states_rebuilder/states_rebuilder.dart';
+import 'package:vrouter/vrouter.dart';
 import '../logic/auth.dart';
 import '../logic/storage.dart';
 
@@ -22,7 +21,7 @@ class LoginScreen extends StatelessWidget {
         return null;
       },
       userType: LoginUserType.name,
-      onSubmitAnimationCompleted: () => myNavigator.toAndRemoveUntil('/'),
+      onSubmitAnimationCompleted: () => context.vRouter.to('/'),
       savedEmail: prefs.get("Username"),
       savedPassword: prefs.get("Password"),
     );

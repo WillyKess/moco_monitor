@@ -1,35 +1,20 @@
 import 'package:encrypted_shared_preferences/encrypted_shared_preferences.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:get_it/get_it.dart';
+import 'package:moco_monitor/logic/data.dart';
 
 class Prefs {
-  late final EncryptedSharedPreferences _secPrefs;
-  late final SharedPreferences _prefs;
+  final EncryptedSharedPreferences _secPrefs = EncryptedSharedPreferences();
   final Map<String, String> prefsMap = {};
-  bool hasValidCredentials = false;
-  Future<bool> init() async {
-    _prefs = await SharedPreferences.getInstance();
-    _secPrefs = EncryptedSharedPreferences();
-    if (_secPrefs.prefs?.getKeys() != null) {
-      for (String value in _secPrefs.prefs!.getKeys()) {
-        print(value + "errrt");
-        prefsMap[value] = await _secPrefs.getString(value);
-        print(await _secPrefs.getString(value) + "eeeee");
-      }
-    }
-    // for (String value in _prefs.getKeys()) {
-    //   if (_prefs.getString(value) != null) {
-    //     prefsMap[value] = _prefs.getString(value)!;
-    //   }
-    // }
-    return true;
+  Prefs() {
+    init();
+  }
+  void init() async {
+    prefsMap["Username"] = await _secPrefs.getString("Username");
+    prefsMap["Password"] = await _secPrefs.getString("Password");
+    GetIt.instance<Data>().refreshGradeData();
   }
 
   void set(String key, String value) {
-    prefsMap[key] = value;
-  }
-
-  void setSave(String key, String value) async {
-    await _prefs.setString(key, value);
     prefsMap[key] = value;
   }
 
@@ -39,6 +24,6 @@ class Prefs {
   }
 
   String get(String key) {
-    return prefsMap[key] ?? 'rrr';
+    return prefsMap[key] ?? '';
   }
 }
