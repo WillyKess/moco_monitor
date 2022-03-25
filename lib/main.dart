@@ -17,17 +17,18 @@ void main() {
         primarySwatch: Colors.orange,
       ),
       routes: [
-        VGuard(
-          afterEnter: (context, from, to) {
-            GetIt.instance<Data>().validCreds
-                ? null
-                : context.vRouter.to('/login');
-          },
-          // beforeEnter: (vRedirector) async {
-          //   data.isLoggedIn ? null : vRedirector.to('/login');
-          // },
-          stackedRoutes: [VWidget(path: '/', widget: const Home())],
-        ),
+        // VGuard(
+        //   afterEnter: (context, from, to) {
+        //     GetIt.instance<Data>().validCreds
+        //         ? null
+        //         : context.vRouter.to('/login');
+        //   },
+        //   // beforeEnter: (vRedirector) async {
+        //   //   data.isLoggedIn ? null : vRedirector.to('/login');
+        //   // },
+        //   stackedRoutes: [VWidget(path: '/', widget: const Home())],
+        // ),
+        VWidget(path: '/', widget: const Home()),
         VWidget(path: '/login', widget: const LoginScreen()),
         VRouteRedirector(
           redirectTo: '/',

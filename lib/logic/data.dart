@@ -4,23 +4,26 @@ import 'package:studentvueclient/studentvueclient.dart';
 
 class Data {
   StudentGradeData? gradeData = StudentGradeData();
-  bool validCreds = false;
-  Data() {
-    refreshGradeData();
-  }
-  Future<void> refreshGradeData() async {
+  // Future<bool> validCreds = Future.value(false);
+  // Data() {
+  //   validCreds = refreshGradeData();
+  // }
+  Future<StudentGradeData?> refreshGradeData() async {
     // ignore: await_only_futures
     await 1;
     Prefs prefs = GetIt.instance<Prefs>();
     try {
       gradeData = await StudentVueClient(prefs.get('Username'),
-              prefs.get('Password'), 'md-mcps-psv.edupoint.com', true, false)
+              prefs.get('Password'), 'md-mcps-psv.edupoint.com', true, true)
           .loadGradebook();
     } catch (e) {
-      validCreds = false;
-      return;
+      return null;
     }
-    validCreds = (gradeData?.error ?? '').isEmpty;
+    if ((gradeData?.error ?? '').isNotEmpty) {
+      return null;
+    } else {
+      return Future<StudentGradeData>.value(gradeData);
+    }
   }
 }
 

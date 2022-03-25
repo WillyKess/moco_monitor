@@ -9,9 +9,21 @@ class Prefs {
     init();
   }
   void init() async {
-    prefsMap["Username"] = await _secPrefs.getString("Username");
-    prefsMap["Password"] = await _secPrefs.getString("Password");
-    GetIt.instance<Data>().refreshGradeData();
+    Future<String> safeGet(String key) async {
+      try {
+        return _secPrefs.getString(key);
+      } catch (e) {
+        return Future<String>.value('');
+      }
+    }
+
+    prefsMap["Username"] = await safeGet('Username');
+    prefsMap["Password"] = await safeGet('Password');
+
+    try {
+      GetIt.instance<Data>().refreshGradeData();
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   void set(String key, String value) {

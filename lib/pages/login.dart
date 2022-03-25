@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:vrouter/vrouter.dart';
-import '../logic/auth.dart';
-import '../logic/storage.dart';
+import 'package:moco_monitor/logic/auth.dart';
+import 'package:moco_monitor/logic/storage.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -22,8 +22,8 @@ class LoginScreen extends StatelessWidget {
       },
       userType: LoginUserType.name,
       onSubmitAnimationCompleted: () => context.vRouter.to('/'),
-      savedEmail: prefs.get("Username"),
-      savedPassword: prefs.get("Password"),
+      savedEmail: prefs.get('Username'),
+      savedPassword: prefs.get('Password'),
     );
   }
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_login/flutter_login.dart';
 import 'package:get_it/get_it.dart';
 import 'package:moco_monitor/logic/data.dart';
@@ -21,11 +21,17 @@ Future<String?> authUser(LoginData credentials) async {
       ..setSaveSecure("Password", password);
     return null;
   } else {
-    return Future.value("Invalid Credentials :(");
+    return Future<String>.value("Invalid Credentials :(");
   }
 }
 
 Future<bool> isValid(String username, String password) async {
-  await GetIt.instance<Data>().refreshGradeData();
-  return GetIt.instance<Data>().validCreds;
+  try {
+    await GetIt.instance<Data>().refreshGradeData();
+  } catch (e) {
+    return Future<bool>.value(false);
+  }
+  return Future<bool>.value(true);
+  // return await GetIt.instance<Data>().refreshGradeData();
+  // return GetIt.instance<Data>().validCreds;
 }
