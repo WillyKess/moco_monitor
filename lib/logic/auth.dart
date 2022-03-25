@@ -27,7 +27,7 @@ Future<String?> authUser(LoginData credentials) async {
 
 Future<bool> isValid(String username, String password) async {
   try {
-    await GetIt.instance<Data>().refreshGradeData();
+    await GetIt.instance<Data>().refreshData();
   } catch (e) {
     return Future<bool>.value(false);
   }

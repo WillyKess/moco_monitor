@@ -21,7 +21,7 @@ class Prefs {
     prefsMap["Password"] = await safeGet('Password');
 
     try {
-      GetIt.instance<Data>().refreshGradeData();
+      GetIt.instance<Data>().refreshData();
       // ignore: empty_catches
     } catch (e) {}
   }

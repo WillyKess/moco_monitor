@@ -3,28 +3,33 @@ import 'package:moco_monitor/logic/storage.dart';
 import 'package:studentvueclient/studentvueclient.dart';
 
 class Data {
-  StudentGradeData? gradeData = StudentGradeData();
-  // Future<bool> validCreds = Future.value(false);
-  // Data() {
-  //   validCreds = refreshGradeData();
-  // }
-  Future<StudentGradeData?> refreshGradeData() async {
+  StudentGradeData gradeData = StudentGradeData();
+  StudentData studentData = StudentData();
+  Future<StudentGradeData?> refreshData() async {
     // ignore: await_only_futures
     await 1;
     Prefs prefs = GetIt.instance<Prefs>();
+    String username = prefs.get('Username');
+    String password = prefs.get('Password');
+
     try {
-      gradeData = await StudentVueClient(prefs.get('Username'),
-              prefs.get('Password'), 'md-mcps-psv.edupoint.com', true, true)
+      gradeData = await StudentVueClient(
+              username, password, 'md-mcps-psv.edupoint.com', true, false)
           .loadGradebook();
     } catch (e) {
-      return null;
+      throw Exception("The credentials ($username, $password) were invalid");
     }
-    if ((gradeData?.error ?? '').isNotEmpty) {
-      return null;
+    if ((gradeData.error ?? '').isNotEmpty) {
+      throw Exception("The credentials ($username, $password) were invalid");
     } else {
+      // refreshStudentData(username, password, this);
       return Future<StudentGradeData>.value(gradeData);
     }
   }
 }
 
-// Possible idea: use futurebuilder to await a valid login, and otherwise show the login screen. Can have a loading spinner that shows up when isLoggedIn is null (make it nullable too), and then based on whether or not it completes with true or false (or error maybe), show different screens. This would be super fast, easy to manage, and make sense.
+void refreshStudentData(String username, String password, Data data) async {
+  data.studentData = await StudentVueClient(
+          username, password, 'md-mcps-psv.edupoint.com', true, false)
+      .loadStudentData();
+}
