@@ -3,9 +3,10 @@ import 'package:moco_monitor/logic/storage.dart';
 import 'package:studentvueclient/studentvueclient.dart';
 
 class Data {
+  bool shouldReload = true;
   StudentGradeData gradeData = StudentGradeData();
   StudentData studentData = StudentData();
-  Future<StudentGradeData?> refreshData() async {
+  Future<StudentGradeData> refreshData() async {
     // ignore: await_only_futures
     await 1;
     Prefs prefs = GetIt.instance<Prefs>();
@@ -25,11 +26,18 @@ class Data {
       // refreshStudentData(username, password, this);
       return Future<StudentGradeData>.value(gradeData);
     }
+    //todo: make this much simpler and/or less LOC
   }
-}
 
-void refreshStudentData(String username, String password, Data data) async {
-  data.studentData = await StudentVueClient(
-          username, password, 'md-mcps-psv.edupoint.com', true, false)
-      .loadStudentData();
+  Future<StudentData> refreshStudentData() async {
+    // ignore: await_only_futures
+    await 1;
+    Prefs prefs = GetIt.instance<Prefs>();
+    String username = prefs.get('Username');
+    String password = prefs.get('Password');
+    studentData = await StudentVueClient(
+            username, password, 'md-mcps-psv.edupoint.com', true, false)
+        .loadStudentData();
+    return studentData;
+  }
 }

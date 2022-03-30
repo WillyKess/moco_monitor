@@ -51,6 +51,7 @@ dependencies:
   shared_preferences: ^2.0.13
   get_it: ^7.2.0
   vrouter: ^1.2.0+21
+  animated_text_kit: ^4.2.1
 
 dev_dependencies:
   flutter_test:

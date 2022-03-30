@@ -15,19 +15,21 @@ Future<String?> authUser(LoginData credentials) async {
   prefs
     ..set("Username", username)
     ..set("Password", password);
-  if (await isValid(username, password)) {
+  Data data = GetIt.instance<Data>();
+  if (await isValid(username, password, data)) {
     prefs
       ..setSaveSecure("Username", username)
       ..setSaveSecure("Password", password);
+    data.shouldReload = false;
     return null;
   } else {
     return Future<String>.value("Invalid Credentials :(");
   }
 }
 
-Future<bool> isValid(String username, String password) async {
+Future<bool> isValid(String username, String password, Data data) async {
   try {
-    await GetIt.instance<Data>().refreshData();
+    await data.refreshData();
   } catch (e) {
     return Future<bool>.value(false);
   }

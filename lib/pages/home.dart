@@ -1,3 +1,4 @@
+import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:moco_monitor/logic/data.dart';
@@ -9,21 +10,17 @@ class Home extends StatelessWidget {
   const Home({Key? key}) : super(key: key);
   @override
   Widget build(BuildContext context) {
-    if (GetIt.instance<Prefs>().get("Username").isNotEmpty &&
+    Data dataClass = GetIt.instance<Data>();
+    if (!(dataClass.shouldReload)) {
+      return classList(dataClass.gradeData);
+    } else if (GetIt.instance<Prefs>().get("Username").isNotEmpty &&
         GetIt.instance<Prefs>().get("Password").isNotEmpty) {
-      Data dataClass = GetIt.instance<Data>();
       Future<StudentGradeData?> _gradeData = dataClass.refreshData();
       return FutureBuilder(
         future: _gradeData,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            debugPrint(snapshot.data.toString() +
-                "\n\n" +
-                dataClass.studentData.toString());
-            String name = dataClass.studentData.nickname ??
-                dataClass.studentData.formattedName ??
-                '';
-            return classList(snapshot.data as StudentGradeData, name);
+            return classList(snapshot.data as StudentGradeData);
           } else if (snapshot.hasError) {
             context.vRouter.to('/login');
             return Transform.scale(
@@ -42,9 +39,11 @@ class Home extends StatelessWidget {
     }
   }
 
-  Scaffold classList(StudentGradeData gradeData, String name) {
+  Scaffold classList(StudentGradeData gradeData) {
     return Scaffold(
-      appBar: AppBar(title: Text("Hello, " + name)),
+      appBar: AppBar(
+        title: const NameGreeter(),
+      ),
       body: Container(
         child: ListView.builder(
           itemCount: (() {
@@ -54,12 +53,18 @@ class Home extends StatelessWidget {
             return (gradeData.classes)?.length;
           })(),
           itemBuilder: (BuildContext context, int index) {
+            SchoolClass currentClass =
+                gradeData.classes?.elementAt(index) ?? SchoolClass();
             return Container(
               padding: const EdgeInsets.all(12.0),
               child: ListTile(
+                onTap: (() {
+                  context.vRouter.to(
+                      '/class/${currentClass.className?.replaceAll(' ', '')}');
+                }),
                 tileColor: Theme.of(context).backgroundColor,
                 leading: Text(
-                  gradeData.classes?.elementAt(index).className ?? '',
+                  currentClass.className ?? '',
                   style: const TextStyle(fontSize: 18),
                 ),
                 trailing: RichText(
@@ -67,17 +72,13 @@ class Home extends StatelessWidget {
                       style: DefaultTextStyle.of(context).style,
                       children: <TextSpan>[
                         TextSpan(
-                          text: (gradeData.classes
-                                  ?.elementAt(index)
-                                  .letterGrade ??
-                              ''),
+                          text: (currentClass.letterGrade ?? ''),
                           style: const TextStyle(
                               fontWeight: FontWeight.bold, fontSize: 16.5),
                         ),
                         const TextSpan(text: "  "),
                         TextSpan(
-                          text: (gradeData.classes?.elementAt(index).pctGrade ??
-                              ''),
+                          text: (currentClass.pctGrade ?? ''),
                           // style: const TextStyle(fontSize: 14),
                         ),
                       ]),
@@ -89,5 +90,39 @@ class Home extends StatelessWidget {
         alignment: Alignment.center,
       ),
     );
+  }
+}
+
+class NameGreeter extends StatelessWidget {
+  const NameGreeter({
+    Key? key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    Data dataClass = GetIt.instance<Data>();
+    if (!(dataClass.shouldReload)) {
+      return Text((dataClass.studentData.nickname ??
+              dataClass.studentData.formattedName ??
+              'User') +
+          '\'s classes:');
+    } else {
+      return FutureBuilder(
+        future: dataClass.refreshStudentData(),
+        builder: (BuildContext context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return AnimatedTextKit(isRepeatingAnimation: false, animatedTexts: [
+              TyperAnimatedText(() {
+                StudentData sdata = snapshot.data;
+                return 'Hello, ' +
+                    (sdata.nickname ?? sdata.formattedName ?? 'User');
+              }(), speed: const Duration(milliseconds: 50))
+            ]);
+          } else {
+            return const Text('');
+          }
+        },
+      );
+    }
   }
 }

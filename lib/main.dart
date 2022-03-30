@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get_it/get_it.dart';
 import 'package:moco_monitor/logic/data.dart';
+import 'package:moco_monitor/pages/class.dart';
 import 'package:moco_monitor/pages/home.dart';
 import 'package:moco_monitor/pages/login.dart';
 import 'package:vrouter/vrouter.dart';
@@ -12,24 +13,15 @@ void main() {
 
   runApp(
     VRouter(
-      title: 'Flutter Demo',
+      debugShowCheckedModeBanner: false,
+      title: 'MoCo Monitor',
       theme: ThemeData(
         primarySwatch: Colors.orange,
       ),
       routes: [
-        // VGuard(
-        //   afterEnter: (context, from, to) {
-        //     GetIt.instance<Data>().validCreds
-        //         ? null
-        //         : context.vRouter.to('/login');
-        //   },
-        //   // beforeEnter: (vRedirector) async {
-        //   //   data.isLoggedIn ? null : vRedirector.to('/login');
-        //   // },
-        //   stackedRoutes: [VWidget(path: '/', widget: const Home())],
-        // ),
         VWidget(path: '/', widget: const Home()),
         VWidget(path: '/login', widget: const LoginScreen()),
+        VWidget(path: '/class/:id', widget: const Class()),
         VRouteRedirector(
           redirectTo: '/',
           path: r'*',
