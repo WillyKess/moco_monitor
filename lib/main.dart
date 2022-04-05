@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_nord_theme/flutter_nord_theme.dart';
 import 'package:get_it/get_it.dart';
 import 'package:moco_monitor/logic/data.dart';
 import 'package:moco_monitor/pages/class.dart';
@@ -15,9 +16,9 @@ void main() {
     VRouter(
       debugShowCheckedModeBanner: false,
       title: 'MoCo Monitor',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-      ),
+      themeMode: ThemeMode.dark,
+      darkTheme: NordTheme.dark(),
+      theme: NordTheme.light(),
       routes: [
         VWidget(path: '/', widget: const Home()),
         VWidget(path: '/login', widget: const LoginScreen()),

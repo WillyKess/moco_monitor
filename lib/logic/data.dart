@@ -36,7 +36,7 @@ class Data {
     String username = prefs.get('Username');
     String password = prefs.get('Password');
     studentData = await StudentVueClient(
-            username, password, 'md-mcps-psv.edupoint.com', true, false)
+            username, password, 'md-mcps-psv.edupoint.com', true, true)
         .loadStudentData();
     return studentData;
   }

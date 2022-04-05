@@ -1,5 +1,6 @@
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_nord_theme/flutter_nord_theme.dart';
 import 'package:get_it/get_it.dart';
 import 'package:moco_monitor/logic/data.dart';
 import 'package:moco_monitor/logic/storage.dart';
@@ -12,7 +13,12 @@ class Home extends StatelessWidget {
   Widget build(BuildContext context) {
     Data dataClass = GetIt.instance<Data>();
     if (!(dataClass.shouldReload)) {
-      return classList(dataClass.gradeData);
+      return Scaffold(
+        appBar: AppBar(
+          title: const NameGreeter(),
+        ),
+        body: ClassList(gradeData: dataClass.gradeData),
+      );
     } else if (GetIt.instance<Prefs>().get("Username").isNotEmpty &&
         GetIt.instance<Prefs>().get("Password").isNotEmpty) {
       Future<StudentGradeData?> _gradeData = dataClass.refreshData();
@@ -20,7 +26,13 @@ class Home extends StatelessWidget {
         future: _gradeData,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            return classList(snapshot.data as StudentGradeData);
+            return Scaffold(
+                appBar: AppBar(
+                  title: const NameGreeter(),
+                ),
+                body: ClassList(
+                  gradeData: (snapshot.data as StudentGradeData),
+                ));
           } else if (snapshot.hasError) {
             context.vRouter.to('/login');
             return Transform.scale(
@@ -35,60 +47,94 @@ class Home extends StatelessWidget {
       );
     } else {
       context.vRouter.to('/login');
-      return const CircularProgressIndicator();
+      return const SizedBox(
+          width: 100, height: 100, child: CircularProgressIndicator());
     }
   }
+}
 
-  Scaffold classList(StudentGradeData gradeData) {
-    return Scaffold(
-      appBar: AppBar(
-        title: const NameGreeter(),
-      ),
-      body: Container(
-        child: ListView.builder(
-          itemCount: (() {
-            gradeData.classes?.removeWhere((element) =>
-                (element.className ?? '').toLowerCase().contains('lunch') &&
-                (element.letterGrade ?? '').toLowerCase().contains('n/a'));
-            return (gradeData.classes)?.length;
-          })(),
-          itemBuilder: (BuildContext context, int index) {
-            SchoolClass currentClass =
-                gradeData.classes?.elementAt(index) ?? SchoolClass();
-            return Container(
-              padding: const EdgeInsets.all(12.0),
-              child: ListTile(
-                onTap: (() {
-                  context.vRouter.to(
-                      '/class/${currentClass.className?.replaceAll(' ', '')}');
-                }),
-                tileColor: Theme.of(context).backgroundColor,
-                leading: Text(
-                  currentClass.className ?? '',
-                  style: const TextStyle(fontSize: 18),
-                ),
-                trailing: RichText(
-                  text: TextSpan(
-                      style: DefaultTextStyle.of(context).style,
-                      children: <TextSpan>[
-                        TextSpan(
-                          text: (currentClass.letterGrade ?? ''),
-                          style: const TextStyle(
-                              fontWeight: FontWeight.bold, fontSize: 16.5),
-                        ),
-                        const TextSpan(text: "  "),
-                        TextSpan(
-                          text: (currentClass.pctGrade ?? ''),
-                          // style: const TextStyle(fontSize: 14),
-                        ),
-                      ]),
-                ),
+class ClassList extends StatelessWidget {
+  final StudentGradeData gradeData;
+  final bool? embeddedIfTrue;
+  const ClassList({
+    Key? key,
+    required this.gradeData,
+    this.embeddedIfTrue,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    bool isEmbedded = (embeddedIfTrue != null);
+    return ListView.builder(
+      shrinkWrap: isEmbedded,
+      physics: isEmbedded
+          ? const NeverScrollableScrollPhysics()
+          : const ScrollPhysics(),
+      itemCount: (() {
+        gradeData.classes?.removeWhere((element) =>
+            (element.className ?? '').toLowerCase().contains('lunch') &&
+            (element.letterGrade ?? '').toLowerCase().contains('n/a'));
+        return (gradeData.classes)?.length;
+      })(),
+      itemBuilder: (BuildContext context, int index) {
+        SchoolClass currentClass =
+            gradeData.classes?.elementAt(index) ?? SchoolClass();
+        Container letterGradeColor(String? grade) {
+          Color color = NordColors.snowStorm.darkest;
+          switch (grade) {
+            case 'A':
+              color = NordColors.aurora.green;
+              break;
+            case 'B':
+              color = NordColors.frost.darker;
+              break;
+            case 'C':
+              color = NordColors.aurora.yellow;
+              break;
+            case 'D':
+              color = NordColors.aurora.orange;
+              break;
+            case 'E':
+              color = NordColors.aurora.red;
+              break;
+          }
+          return Container(
+            padding: const EdgeInsets.all(5.0),
+            color: color,
+            child: Text(
+              currentClass.letterGrade ?? '',
+              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
+            ),
+          );
+        }
+
+        return Container(
+          padding: const EdgeInsets.all(12.0),
+          child: ListTile(
+              onTap: (() {
+                context.vRouter.to(
+                    '/class/${currentClass.className?.replaceAll(' ', '')}');
+              }),
+              tileColor: NordColors.frost.darker,
+              title: Text(
+                currentClass.className ?? '',
+                style: const TextStyle(fontSize: 18),
               ),
-            );
-          },
-        ),
-        alignment: Alignment.center,
-      ),
+              trailing: () {
+                if (isEmbedded) {
+                  return letterGradeColor(currentClass.letterGrade);
+                } else {
+                  return Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      letterGradeColor(currentClass.letterGrade),
+                      Text('    ' + (currentClass.pctGrade ?? '') + '%')
+                    ],
+                  );
+                }
+              }()),
+        );
+      },
     );
   }
 }

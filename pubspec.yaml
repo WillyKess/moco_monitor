@@ -52,6 +52,7 @@ dependencies:
   get_it: ^7.2.0
   vrouter: ^1.2.0+21
   animated_text_kit: ^4.2.1
+  flutter_nord_theme: ^2.1.0
 
 dev_dependencies:
   flutter_test:
