@@ -35,20 +35,15 @@ class Home extends StatelessWidget {
                 ));
           } else if (snapshot.hasError) {
             context.vRouter.to('/login');
-            return Transform.scale(
-                scale: 0.04,
-                child: const CircularProgressIndicator(strokeWidth: 40.0));
+            return const Center(child: CircularProgressIndicator());
           } else {
-            return Transform.scale(
-                scale: 0.04,
-                child: const CircularProgressIndicator(strokeWidth: 40.0));
+            return const Center(child: CircularProgressIndicator());
           }
         },
       );
     } else {
       context.vRouter.to('/login');
-      return const SizedBox(
-          width: 100, height: 100, child: CircularProgressIndicator());
+      return const Center(child: CircularProgressIndicator());
     }
   }
 }
@@ -81,7 +76,7 @@ class ClassList extends StatelessWidget {
             gradeData.classes?.elementAt(index) ?? SchoolClass();
         Container letterGradeColor(String? grade) {
           Color color = NordColors.snowStorm.darkest;
-          switch (grade) {
+          switch ((grade ?? '').replaceAll('-', '').replaceAll('+', '')) {
             case 'A':
               color = NordColors.aurora.green;
               break;
@@ -115,7 +110,7 @@ class ClassList extends StatelessWidget {
                 context.vRouter.to(
                     '/class/${currentClass.className?.replaceAll(' ', '')}');
               }),
-              tileColor: NordColors.frost.darker,
+              tileColor: NordColors.polarNight.lightest,
               title: Text(
                 currentClass.className ?? '',
                 style: const TextStyle(fontSize: 18),

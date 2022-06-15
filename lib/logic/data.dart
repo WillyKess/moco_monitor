@@ -17,6 +17,7 @@ class Data {
       gradeData = await StudentVueClient(
               username, password, 'md-mcps-psv.edupoint.com', true, false)
           .loadGradebook();
+      print(gradeData.toString());
     } catch (e) {
       throw Exception("The credentials ($username, $password) were invalid");
     }
@@ -36,7 +37,7 @@ class Data {
     String username = prefs.get('Username');
     String password = prefs.get('Password');
     studentData = await StudentVueClient(
-            username, password, 'md-mcps-psv.edupoint.com', true, true)
+            username, password, 'md-mcps-psv.edupoint.com', true, false)
         .loadStudentData();
     return studentData;
   }

@@ -80,7 +80,7 @@ class GradeList extends StatelessWidget {
           color = NordColors.aurora.red;
         }
         return ListTile(
-          tileColor: color,
+          tileColor: NordColors.polarNight.lightest,
           title: Text(
             currentAssignment.assignmentName ?? '',
             style: TextStyle(
